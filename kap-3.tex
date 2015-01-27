@@ -74,7 +74,63 @@
    \begin{subsection}{Ablaufpläne mittels ILP}
     ILPs sind ganzzahlige lineare Programme. Sollte ein Ablaufplan mit Bindung existieren, so wird dieser auch vom ILP gefunden. (Lösen mittels Branch\&Bound, Relaxierung findet untere Schranken)
    \end{subsection}
-
-
+  \end{section}
+  
+  \begin{section}{Dynamische Ablaufplanung}
+   Es liegt eine iterative Definiton der Berechnungen vor, also immer die gleichen Jobs abhängig vom Zeitindex $n$.
+   
+   Ein \f{iterativer Problemgraph} ist ein Netzwerk, dessen Kantengewichte die Indexverschiebungen darstellen -- dieser kann insbesondere Zyklen beinhalten. Ein periodischer Ablaufplan ordnet jedem Job eine Menge von Startzeitpunkten zu, die die Indexverschiebungen berücksichtigen. Das Iterationsintervall ist die Menge aller Zeitschritte zwischen Start des ersten Jobs und Ende des letzten Jobs einer Iteration. Die Art der \f{Parallelisierung} hat starken Einfluss auf die Datenrate, mit der die Jobs verarbeitet werden können.
+   \begin{itemize}
+    \item sequenzielle Abarbeitung -- erforderlich, wenn alle Daten einer Iteration mit einem Takt synchronisiert werden müssen
+    \item nichtüberlappende Abarbeitung -- erforderlich, wenn sich alle Jobs nach einer Iteration synchronisieren müssen. Äquivalent zur sequenziellen Abarbeitung bei geeignetem Retiming (Indexverschiebung)
+    \item überlappende Abarbeitung -- ermöglicht viel kürzere Perioden bei geeigneter Planung
+   \end{itemize}
+   
+   \begin{itemize}
+    \item vollstatische Bindung -- jeder Job läuft in jeder Iteration stets auf der gleichen Ressourceninstanz
+    \item zyklostatische Bindung -- jeder Job läuft nach jeder $k$-ten Iteration wieder auf der gleichen Ressourceninstanz
+   \end{itemize}
+   
+   \begin{subsection}{Sequenzielle periodische Ablaufplanung}
+    \f{Satz:} Es gibt einen gültigen, sequentiellen, periodischen Ablaufplan ohne Ressourcenbeschränkung mit Iterationsintervalllänge $L$ für einen Problemgraphen $G=(V,E,s)$, genau dann, wenn
+    \[ \forall u,v\in V: W(u,v)>L \Rightarrow S(u,v) \geq 1 \]
+    Dabei ist $S(u,v)$ die Menge der Längen der kürzesten Pfade von $u$ nach $v$.
+   \end{subsection}
+   
+   \begin{subsection}{Retiming}
+    Wir versuchen durch Indexverschiebungen die Länge des Iterationsintervalls zu minimieren $\rightarrow$ neufestlegung der Interationsindizes. Ein Retiming $r(u)$ ändert im Problemgraphen nur die Größen $S(u,v)$ -- und auch nur in Abhängigkeit von $r$ -- jedoch nicht die Größe $W(u,v)$. Die Lösung eines gültigen Retimings ist also eigentlich ein single-source-longest-path Problem in einem besonderen Graphen $G_{r,L}$. Gibt es in diesem Graphen einen positiven Zyklus, so gibt es kein Retiming der Länge $L$.
+    
+    \f{Retiming-Algorithmus}
+    \begin{itemize}
+     \item Berechne zu einem Problemgraphen die Größen $S(.)$ und $W(.)$ durch Lösung eines all pair shortest path Problems $O(|V||E|log|V|)$
+     \item Sortiere die Menge $\{ W(u,v) | u,v \in V \}$ $O(|V|2log|V|)$
+     \item Bestimme durch Binärsuche das kleinste $L=W(u,v)$ aus obiger Menge, für das single source longest path Problem in $G_{r,L}$ eine Lösung $r$ hat. Wähle $r$ als Retiming. $O(|V|3log|V|)$
+    \end{itemize}
+   \end{subsection}
+   
+   \begin{subsection}{Überlappende periodische Ablaufplanung}
+    \f{Satz:} gegeben sei ein iterativer Problemgraph $G(V,E,s)$. Für jede Kante $e\in E$ sei $w(q(e))$ die Berechnungszeit ihres Quellknotens. Dann ist die Periode nach unten beschränkt durch
+     \[ P_{min} = \max \left\{ \left\lceil \frac{\sum_{e\in Z} w(q(e))}{\sum_{e\in Z} s(e)} \right\rceil \bigg | Z\text{ ist Zyklus in }G \right\} \]
+     Die Periodenschranke kann in $O(|V|\cdot|E|\cdot \log \sum_{v\in V} w(v))$ berechnet werden.
+     
+     Ein Problemgraph hat \f{perfekte Rate} wenn es für jeden einfachen Zyklus $Z$ die Summe $\sum_{e\in Z} s(e) = 1$ ist. Hat ein Graph perfekte Rate, so gibt es zu einem Ablaufplan minimaler Periode auch eine statische Bindung.
+     
+     Da eine zyklostatische Bindung eine Periodizität $K$ hat, kann man sie im Grunde gleichsetzen mit einer statischen Bindung bei einem $K$-fach abgerollten oder entfalteten Problemgraphen (zu jedem Knoten gibt es nun $K$-viele Instanzen usw.).
+   \end{subsection}
+   
+   \begin{subsection}{Periodische Ablaufplanung unter Ressourcenbeschränkungen}
+    Diese können wieder mit ILPs gelöst werden.
+    
+    \f{Satz -- Processor Bound:} Gegeben sei ein iterativer Problemgraph $G = (V,E,s)$ und ein einziger Ressourcetyp (Prozessor) auf dem jeder Knoten $v_i$ in Zeit $w(v_i)$ ausgeführt werden kann. Ferner sei eine Periode $P$ für den Ablaufplan gegeben. Dann gilt für die minimale Zahl von benötigten Ressourcen $\alpha_{min}$:
+    \[ \alpha_{min} = \left\lceil \frac{\sum_i w(v_i)}{P} \right\rceil \]
+    Das zugehörige ILP in Worten:
+    \begin{itemize}
+     \item eine binäre Variable $x_{i,t}$ drückt den Ablaufplan aus. Sie ist genau dann $1$, wenn die Aufgabe $v_i$ zum Zeitpunkt $t+nP$ gestartet wird, also $\uptau (v_i) = t+nP$.
+     \item die Aufgabe $v_i$ darf nur genau ein mal pro Periode geplant werden.
+     \item Es gilt $ \sum_{t=l_i}^{h_i} t\cdot x_{i,t} = \uptau(v_i) $ und somit sagt die Bedingung aus, dass Aufgabe $v_j$ frühestens $w_i - s_{i,j} P$ Zeitschritte später als Aufgabe $v_i$ geplant werden darf, wenn es eine Datenabhängigkeit mit Indexverschiebung $s_{i,j}$ zwischen Aufgabe $v_i$ und Aufgabe $v_j$ gibt.
+     \item Ressourcenbeschränkung: Man überlege sich, dass die Ressource $\beta(v_i)$ zum Zeitpunkt $t + nP$ durch $v_i$ nur belegt sein kann, wenn
+     \[ \uptau(v_i) \leq t \leq \uptau(v_i) + w_i -1 \text{ oder } \uptau(v_i)-P \leq t \leq \uptau(v_i) + w_i -1 -P \]
+    \end{itemize}
+   \end{subsection}
   \end{section}
 \end{chapter}
