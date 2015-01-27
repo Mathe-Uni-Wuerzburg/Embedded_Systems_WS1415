@@ -1,3 +1,80 @@
-\begin{chapter}{Kapitel}
- 
+\begin{chapter}{Ablaufplanung}
+  \f{Unterscheidungskriterien}
+  \begin{itemize}
+   \item statische vs. dynamische -- statische Ablaufpläne treten auf, wenn zur Übersetzungs-/Synthesezeit ein Ablaufplan erstellt werden muss, vor allem bei hardwarenahem Implementationstechnicken. Dynamische Ablaufpläne treten zur Laufzeit des ES auf, meist bei Softwareimplementierungen.
+   \item präemptiv vs nicht-präemptiv -- bei präemptiven Plänen geht man davon aus, dass die Laufzeit eines Jobs viel länger ist als die Dauer, ihn zu pausieren, meist Software. Bei kurzen oder nicht-unterbrechbaren Jobs verwendet man nicht-präemptive Pläne.
+   \item Abhängigkeitsbedingungen -- bei Datenabhängigkeiten unterliegt der Plan zeitlichen Einschränkungen, gegeben durch DAG. Kommen sehr häufig vor.
+   \item Ressourcenbeschränkungen -- Hardware (PUs, Busse, Speicher) als Nebenbedingung, Probleme werden schwerer.
+   \item Zeitbeschränkungen -- 
+   \begin{itemize}
+    \item absolute: Deadlines \& Release-Termine
+    \item relative: zeitliche Bedingungen zwischen den einzelnen Jobs (Start- \& Endzeitpunkte)
+   \end{itemize}
+   \item periodisch vs. aperiodisch -- periodische Probleme kommen bei Iterationen vor, periodische Einplanung. Findet Verwendung bei Schleifenoptimierungen oder DSP.
+  \end{itemize}
+  
+  \begin{section}{Statische Ablaufplanung}
+   \begin{subsection}{Statische Ablaufplanung ohne Ressourcenbeschränkungen} 
+    ist einfach und kann von gängigen Graph-Algorithmen effizient gelöst werden.
+    
+   \f{der As Soon as Possible-Algorithmus (ASAP) (Komplexität $O(|V| + |E|)$)}
+   \begin{itemize}
+    \item berechne topologische Sortierung
+    \item verplane jeden Knoten in Reihenfolge der topologischen Sortierung vom frühest möglichen Zeitpunkt (wenn die entsprechende Ressoure wieder frei ist)
+   \end{itemize}
+
+   Dieser Algorithmus liefert einen Ablaufplan minimaler Latenz $\rightarrow$ untere Schranke für Pläne mit Zeit- \& Ressourcenbeschränkungen. (Beweisbar über Induktion über die Startzeitpunkte.) 
+   
+   \f{der As Late as Possible-Algorithmus (ALAP) (Komplexität $O(|V| + |E|)$)}
+   \begin{itemize}
+    \item berechne umgekehrte topologische Sortierung
+    \item verplane jeden Knoten in Reihenfolge der umgekehrten Sortierung vom spätest möglichen Zeitpunkt (beachte kritische Pfade)
+   \end{itemize}
+
+   Dieser Algorithmus findet Anwendung, wenn eine Latenzschranke vorgegeben ist und die Jobs möglichst spät gestartet werden sollen.
+   \end{subsection}
+   
+   \begin{subsection}{Ablaufplanung mit Zeitbeschränkungen}
+    absolute Zeitbeschränkungen $\Leftrightarrow$ relative Zeitbeschränkungen zum Startknoten $\Rightarrow$ wir betrachten nur relative Zeitbeschränkungen.\\
+    
+    Der \f{Constraintgraph} ist ein gewichteter, gerichteter Graph mit Gewichtsfunktion, die sich aus dem Sequenzgraphen ergibt. Er enthält alle Knoten \& Kanten des Sequenzgraphen sowie für jede Zeitbeschränkung eine weitere Kante, deren Gewicht der Zeitbeschränkung entspricht.\\
+    
+    Die Existenz eines gültigen Ablaufplans kann mit Zeit- aber ohne Ressourcenbeschränkungen in polinomieller Zeit entschieden und ein latenzminimaler, gültiger Ablaufplan $\uptau$ -- falls existent -- gefunden werden. (Komplexität $O(|V_S|\cdot|E_C|)$ mittels Bellman-Ford)\\
+   \end{subsection}
+   
+   \begin{subsection}{Ablaufplanung mit Ressourcenbeschränkungen}
+    \f{Optimierungsprobleme}
+    \begin{itemize}
+     \item Latenzminimierung mit Ressourcenbeschränkungen -- bei gegebener Allokation sind Bindung und Ablaufplan mit minimaler Latenz gesucht
+     \item Kostenminimierung unter Latenzbeschränkung -- bei gegebener Latenzschranke sind Allokation, Bindung und Ablaufplan mit minimalen Kosten gesucht
+     \item Zulässiges Ablaufproblem -- gesucht ist eine Implementierung bei gegebener Latenzschranke und Allokation
+     \item Gewichtete Minimierung von Latenz und Kosten -- gesucht ist eine Implementierung, die bei gegebener Latenzschranke und Allokation eine Kostenfunktion minimiert
+    \end{itemize}
+    
+    \f{List Scheduling} ist eine Weiterentwicklung von ASAP. Es werden Listen geführt für alle abgearbeiten Jobs, alle offenen Jobs und alle Ressourcen mit ihren darauf laufenden Jobs. Wähle eine maximale Teilmenge aller Jobs je Ressourcentyp mit absteigender Priorität.  Plane diese Jobs sinnvoll ein. Die Qualität des Scheduling hängt von der Wahl der Knoten ab. Gebräuchliche Prioritätsfunktionen:
+    \begin{itemize}
+     \item Anzahl der Nachfolgeaufträge je Job
+     \item Länge des längsten Pfades vom Job zum Ende
+     \item Mobilität der Aufgaben (Differenz zwischen ASAP und ALAP Startzeiten)
+    \end{itemize}
+    List Scheduling ist nur eine Heuristik!\\
+    
+    \f{Force Directed Scheduling} benutzt ein Kräftemodell, um die Jobs an geeignete Ausführungszeitpunkte zu schieben/ziehen. Dynamische Änderung des Modells nach Planung von Aufgaben, Berücksichtigung direkter Nachbarschaften im Graphen, Updates des Kräftemodells nach jedem Schritt. Man beachtet dabei folgende Kräfte:
+    \begin{itemize}
+     \item Selbstkraft -- Ausführung am besten zu Zeiten geringer Auslastung
+     \item Nachbarschaftskräfte -- Einfluss durch Vorgänger- \& Nachfolger-Jobs. Planung nach sinkender mittlerer Auslastung der Ressourcen
+    \end{itemize}
+    Benutze diese Kräfte als Priorisierung für das List Scheduling
+    \begin{itemize}
+      \item wähle die höchsten Kräfte für minimale Latenz unter Ressourcenbeschränkungen
+      \item benutze Kräfte, um Job für Job Zeitpunkten zuzuordnen für minimalen Ressourcenbedarf unter Latenzschranke (heuristische Minimierung der Auslastung)
+    \end{itemize}
+   \end{subsection}
+   
+   \begin{subsection}{Ablaufpläne mittels ILP}
+    ILPs sind ganzzahlige lineare Programme. Sollte ein Ablaufplan mit Bindung existieren, so wird dieser auch vom ILP gefunden. (Lösen mittels Branch\&Bound, Relaxierung findet untere Schranken)
+   \end{subsection}
+
+
+  \end{section}
 \end{chapter}
