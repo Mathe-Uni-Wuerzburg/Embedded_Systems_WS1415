@@ -1,0 +1,12 @@
+*~
+*.aux
+*.toc
+*.log
+*.backup
+*.bbl
+*.blg
+*.out
+*.bak
+*.idx
+*.ilg
+*.ind
