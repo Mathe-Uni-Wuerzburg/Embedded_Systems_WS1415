@@ -200,7 +200,34 @@
    
    \pic{RMschedule}
    
+   Die \f{deadlinemonotone Planung (DM-scheduling)} ordnet Jobs gemäß ihrer relativen Deadlines -- kleinste relative Deadline zuerst. Falls $t_d^*$ proportional zu $P(v)$ ist, sind RM und DM äquivalent. Sind die Deadlines kürzer als die Perioden, so ist DM der RM überlegen.
    
+   Beides sind Verfahren mit statischer Priorität.
+   
+   Wir nennen die Priorität eines Jobs $v_i$ nun $\pi(v_i)$. Wir nennen $R(v_i) = \max \{ \uptau_e(v_i,j)-(t_r^*(v_i)+j\cdot P(v_i)) | j\in\mathbb{N} \}$ die \f{maximale Flußzeit} oder auch \f{maximale Response} einer Instanz des Jobs $v_i$. Instanzen $(v_i,j)$ mit Flußzeit $\geq \min\{ t_d^*(v_i),R(v_i) \}$ heißen \f{kritisch}.
+   
+   \f{Lemma:} ein System periodischer Tasks mit statischer Prioritätszuweisung $\pi(v_1) > \dots > \pi(v_n)$. Dann liefert $\pi$ einen Ablaufplan mit maximaler Response $R(v_k) \leq t_k$ für jedes $t_k$, dass folgende Ungleichung erfüllt:
+   \[ t_k \geq w(v_k) + \sum_{i=1}^{k-1}\left\lceil \frac{t_k}{P(v_i)}\right\rceil \cdot w(v_i) \]
+   Dieses Lemma liefert uns bei vorgegebener Priorität ein hinreichendes Kriterium dafür, ob für jeden Job kürzer ist als dessen Deadline. 
+   
+   Ein System periodischer Jobs heißt \f{einfach periodisch}, wenn für alle Jobs $v_i$ gilt: $P(v_{i+1})$ ist ein Vielfaches von $P(v_i)$ und $t_d^*(v_i) = P(v_i)$.
+   
+   \f{Satz:} Ein System einfach periodischer Jobs hält unter DM/RM alle Deadlines, solange die Auslastung nie über $100\%$ ist.
+   
+   Ein System heißt \f{p-kritisch} genau dann wenn es ein Zeitintervall $[t-p_n,t]$ gibt mit: $t=t_d^*(v_n) +m\cdot p_n$, in dem zu jedem Zeitpunkt unter DM-Planung ein Job auf dem Prozessor läuft. Offensichtlich kann man bei diesen die Laufzeit keines Jobs mehr erhöhen, ohne dass der letzte Job seine Deadline verpasst. 
+   
+   \f{Satz (Layland \& Liu):} Ein System von $n$ periodischen Jobs mit $t_d^*(v) = P(v)$ ist stets korrekt DM/RM-planbar, solange für die Auslastung $U$ gilt:
+   \[ U \leq n(2^\frac{1}{n} -1) \]
+   
+   Dynamische Systeme wie EDF liefern für Auslastungen $\leq 1$ stets einen Plan, welcher jedoch unvorhersagbar ist. 
+   
+   \f{Einfaches Belegungslemma:} Gegeben sei eine Menge von periodischen Jobs $V$ ohne Datenabhängigkeiten mit $t_d^*(v)=P(v)$. Dann belegt jede Aufgabe $v$, die in einem Intervall der Länge $t$ mindestens eine Deadline hat, die CPU in einem korrekten Ablaufplan für mindestens
+   \[ \left\lfloor \frac{t-t_r^*(v)}{P(v)} \right\rfloor \cdot w(v) \]
+   Zeiteinheiten.
+   
+   \f{Satz von Liu:} Gegeben sei eine Menge von periodischen Tasks $V$ ohne Datenabhängigkeiten. Dann liefert dynamisches EDF Scheduling einen Ablaufplan, der alle Deadlines einhält, falls
+   \[ 1 \geq \sum_{v\in V} \frac{w(v)}{t_d^*(v)} \]
+
 
 
   \end{subsection}
