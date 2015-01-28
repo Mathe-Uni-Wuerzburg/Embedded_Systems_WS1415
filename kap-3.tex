@@ -132,5 +132,75 @@
      \[ \uptau(v_i) \leq t \leq \uptau(v_i) + w_i -1 \text{ oder } \uptau(v_i)-P \leq t \leq \uptau(v_i) + w_i -1 -P \]
     \end{itemize}
    \end{subsection}
+   
+   \f{Gründe für dynamische Ablaufplanung}
+   \begin{itemize}
+    \item unbekannte oder datenabhängig stark variierende Länge der Bearbeitungszeiten
+    \item Zahl/Art der Jobs vorher nicht bekannt
+    \item Datenabhängigkeiten teilweise unbekannt oder variabel
+   \end{itemize}
+   
+   \begin{itemize}
+    \item $t_r(v)$ -- Releasezeit, der frühest möglichen Startzeitpunkt eines Jobs. 
+    \item $t_d(v)$ -- Deadline, der spätest mögliche Endzeitpunkt eines Jobs.
+   \end{itemize}
+   
+   Mit \f{Dispatchlatenz} $L_D$ bezeichnet man die Zeitspanne, die benötigt wird, um nach Stoppen eines Jobs den nächsten zu starten. 
+   
+   Die \f{Ressourcenauslastung} $U$ für eine CPU und einen Ablaufplan mit Latenz $L$ ist gegeben durch
+   \[ U = \frac{\sum_{v\in V} w(v)}{L} \cdot 100 \]
+   Die \f{Flusszeit} einer Aufgabe $v$ ist gegeben durch: $t_F(v) = \uptau_e(v)-t_r(v)$
+   
+   Die \f{Wartezeit} einer Aufgabe $v$ ist gegeben durch: $t_W(v) = t_F(v)-w(v)$, also die Zeit vom frühest möglichen Startzeitpunkt bis zu ihrem effektiven Ende.
+   
+   Die \f{Lateness} eines Jobs $v$ ist gegeben durch: $t_L(v) = \uptau_e(v) - t_d(v)$. Sie kann sowohl positiv als auch negativ sein. 
+   
+   Die \f{Tardiness} eines Jobs $v$ ist gegeben durch: $t_T(v) = \max\{ t_L(v),0 \}$. Diese verwendet man, wenn man nur an echten Zeitverletzungen intressiert ist.
+   
+   Man kennt \f{time sharing Systeme} vorallem bei Mehrbenutzersystemen (Betriebssysteme) -- man möchte die Ressourcenauslastung maximieren und die Fluss- bzw. Wartezeiten minimieren.
+   
+   Bei \f{real time operating systems} herrschen harte Zeitbedingungen, daher sind die primären Ziele: 
+   \begin{itemize}
+    \item minimieren der Lateness, 
+    \item minimieren der mittleren Tardiness, 
+    \item minimieren der Anzahl von Aufgaben mit Tardiness $> 0$ 
+   \end{itemize}
+  
+  \begin{subsection}{nichtpräemptive dynamische Systeme}
+   also von Systemen, die ohne das Unterbrechen von Aufgaben auskommen.
+   
+   Bei \f{first come first serve (FCFS)} handelt es sich um eine Heuristik, die die Aufgaben in der Reihenfolge einplant, in der sie auftreten. Dabei hängt die mittlere Wartezeit stark von der tatsächlichen Reihenfolge ab.
+   
+   Bei \f{shortest job first (SJF)} handelt es sich um eine Heuristik, die die Reihenfolge nach der gewichteten Bearbeitungszeit bildet. $w(v)$ Bearbeitungszeit, $c(v)$ Gewicht $\Rightarrow$ Reihenfolge aus $\frac{w(v)}{c(v)}$. Ohne Datenabhängigkeiten liefert dieses Verfahren eine minimale mittlere Wartezeit (Satz von Smith). Dabei bleibt die Priorität der Aufgaben statisch, ändert sich also nicht während der Berechnung. Für Releasezeiten $t_r(v) \neq 0$ oder mit Datenabhängigkeiten allerdings dieses Problem NP-hart.
+
+   Bei \f{earliest deadline first (EDF)} handelt es sich um eine Heuristik, die die Jobs anhand ihrer Deadlines einplant. Sie minimiert die maximale Lateness, wenn alle Jobs Releasezeit $t_r(v)=0$ haben (Jackson Regel). Diese hat ebenfalls statische Prioritäten. Auch bei Releasezeiten $t_r(v) \neq 0$ oder mit Datenabhängigkeiten wird dieses Problem NP-hart.
+  \end{subsection}
+  
+  \begin{subsection}{Präemptive dynamische Planung}
+   Alle Jobs können nun in ihrer Bearbeitung unterbrochen werden. 
+   
+   Bei \f{weighted round robin (WRR)} handelt es sich um eine Heuristik, die die Jobs in eine FIFO Warteschlange einreiht. Jeder Job dieser Schlange wird $c(v)\cdot Q$ Zeiteinheiten lang bearbeitet und dann pausiert und es kommt der nächste Job der Schlange dran. Dabei kommt es nicht zum Aushungern von Jobs, alle sind mal dran. WRR ist einfach zu implementieren, liefert jedoch eine hohe mittlere Wartezeit und kann nicht für Echtzeitbedingungen garantieren.
+   
+   Auch \f{EDF} lässt sich gut auf präemptive Systeme anwenden. Wenn ein neuer Job bereit wird überprüft man dessen Priorität und unterbricht dann evtl. den aktuell laufenden Job, falls dieser eine niedrigere Priorität aufweist. Falls ein Ablaufplan ohne Datenabhängigkeiten existiert, der alle Deadlines einhält, so existiert auch ein Plan nach EDF, der alle Deadlines einhält (stärker als Jackson, da keine Releasezeiten gefordert).
+   
+   Die Vorhersagbarkeit des Verhaltens ist ein Problem der präemptiven Planungssysteme, weswegen sie kaum in Echtzeitsystemen mit sicherheitskritischen Deadlines eingesetzt werden. Es ist nicht einmal möglich, stets best- und worst-case Verhalten solcher System anzugeben.
+  \end{subsection}
+   
+  \begin{subsection}{Präemptive periodische Planung}
+   Für dynamische Planungsverfahren, bei denen alle Aufgaben unterbrochen werden können.
+   
+   \f{Periodische Tasks}
+   Es wird ein System periodisch auftretender Jobs mit relativen Deadlines $t_d^*(v)$ und relativen Releasezeiten $t_r^*(v)$ definiert, die mit folgenden Releasezeiten und Deadlines assoziiert werden:
+   \begin{itemize}
+    \item $t_r(v,n) = t_r^*(v)+n\cdot P(v)$
+    \item $t_d(v,n) = t_r^*(v)+t_d^*(v)+n\cdot P(v)$
+   \end{itemize}
+   
+   Die \f{ratenmonotone Planung (RM-scheduling)} ist ein solches Verfahren. Es ist prioritätsbasiert und ordnet Tasks ihrer Rate $\frac{1}{P(v)}$.
+   
+   \pic{RMschedule}
+
+
+  \end{subsection}
   \end{section}
 \end{chapter}
