@@ -142,7 +142,7 @@ ein Alphabet $\Sigma, \Sigma^\omega$ die Menge aller unendlichen Folgen über $\
 \noindent Sei $AP$ eine Menge von atomaren Aussagen. Dann ist die Menge der LTL Formeln über $AP$ wie folgt definiert: 
 \begin{enumerate}
  \item jedes $p\in AP$ ist eine LTL Formel 
- \item sind $\Phi_1$ und $\Phi_2$ Formeln, dann auch $\neg \Phi_1$, $\Phi_1 \bigvee \Phi_2$, $\f{X}\Phi_1$, $\Phi_1\f{U}\Phi_2$
+ \item sind $\Phi_1$ und $\Phi_2$ Formeln, dann auch $\neg \Phi_1$, $\Phi_1 \vee \Phi_2$, $\f{X}\Phi_1$, $\Phi_1\f{U}\Phi_2$
  \item nichts sonst ist eine LTL Formel 
 \end{enumerate}
 
@@ -161,7 +161,7 @@ Fallunterscheidung über die Struktur von $\Phi$:
 \begin{itemize}
  \item $\sigma \vDash p$ \qquad \qquad   falls $p\in AP$ und $p\in\sigma(0)$
  \item $\sigma \vDash \neg\Phi$ \qquad  \qquad falls $\sigma \nvDash \Phi$
- \item $\sigma \vDash \Phi_1 \bigvee \Phi_2$ \qquad falls $\sigma \vDash \Phi_1$ oder $\sigma \vDash \Phi_2$
+ \item $\sigma \vDash \Phi_1 \vee \Phi_2$ \qquad falls $\sigma \vDash \Phi_1$ oder $\sigma \vDash \Phi_2$
  \item $\sigma \vDash \f{X}\Phi$ \qquad  \qquad falls $\sigma^1 \vDash \Phi $
  \item $\sigma \vDash \Phi_1\f{U}\Phi_2$ \qquad falls $\exists i: \left(\sigma^i\vDash \Phi_2 \wedge \forall k < i:\sigma^k \vDash \Phi_1 \right)$
 \end{itemize}
@@ -172,13 +172,13 @@ Fallunterscheidung über die Struktur von $\Phi$:
 
 \f{F} \dots finally (``irgendwann''), \f{G} \dots globally (``immer''), \f{W} \dots weak until, \f{R} \dots releases
 \begin{itemize}
- \item $\Phi_1\wedge\Phi_2 \equiv \neg(\neg\Phi_1\bigvee\neg\Phi_2)$
- \item $\Phi_1 \rightarrow \Phi_2 \equiv \neg\Phi_1\bigvee\Phi_2$
- \item $true \equiv a\bigvee\neg a$
+ \item $\Phi_1\wedge\Phi_2 \equiv \neg(\neg\Phi_1\vee\neg\Phi_2)$
+ \item $\Phi_1 \rightarrow \Phi_2 \equiv \neg\Phi_1\vee\Phi_2$
+ \item $true \equiv a\vee\neg a$
  \item $false \equiv \neg true$
  \item $\f{F}\Phi \equiv true\f{U}\Phi$
  \item $\f{G}\Phi \equiv \neg\f{F}\neg\Phi$
- \item $\Phi_1\f{W}\Phi_2 \equiv (\Phi_1\f{U}\Phi_2)\bigvee\f{G}\Phi_1$
+ \item $\Phi_1\f{W}\Phi_2 \equiv (\Phi_1\f{U}\Phi_2)\vee\f{G}\Phi_1$
  \item $\Phi_1\f{R}\Phi_2 \equiv \neg(\neg\Phi_1\f{U}\Phi_2)$
 \end{itemize}
 \vspace*{5pt}
@@ -204,10 +204,10 @@ Fallunterscheidung über die Struktur von $\Phi$:
  \item $\Phi\f{U}\Psi \equiv \Phi\f{U}(\Phi\f{U}\Psi)$
  \item Rekursionsgesetze:
  \begin{itemize}
-  \item $\f{F}\Phi \equiv \Phi\bigvee\f{XF}\Phi$
+  \item $\f{F}\Phi \equiv \Phi\vee\f{XF}\Phi$
   \item $\f{G}\Phi \equiv \Phi\wedge\f{XG}\Phi$
-  \item $\Phi\f{U}\Psi \equiv \Psi\bigvee(\Phi\wedge\f{X}(\Phi\f{U}\Psi))$
-  \item $\Phi\f{W}\Psi \equiv \Psi\bigvee(\Phi\wedge\f{X}(\Phi\f{W}\Psi))$
+  \item $\Phi\f{U}\Psi \equiv \Psi\vee(\Phi\wedge\f{X}(\Phi\f{U}\Psi))$
+  \item $\Phi\f{W}\Psi \equiv \Psi\vee(\Phi\wedge\f{X}(\Phi\f{W}\Psi))$
  \end{itemize}
 \end{itemize}
 \vspace*{5pt}
@@ -337,7 +337,7 @@ Läufe akzeptiert auf denen die Formel gilt. Zeigen tun wir das zunächst an ein
 \noindent Für die Formel $G(p \rightarrow Fq)$ über $AP=\{p,q\}$ akzeptiert folgender Automat die Sprache $[[G(p\rightarrow Fq)]]$
 \begin{figure}[!ht]
  \centering
- \includegraphics[scale=0.7]{pics/automatpq}
+ \includegraphics{pics/automatpq}
 \end{figure}
 
 \f{Der Produktautomat}
@@ -366,5 +366,71 @@ Checking für LTL Formeln algorithmisch durchführen kann:
  \item bilde den Produktautomaten $BA(L(BA(K)))\cap L(BA(\neg\Phi))$ und entscheide, ob  die Menge der akzeptierenden Läufe leer ist. 
  \item gibt es einen akzeptierenden Lauf, ist dieser ein Gegenbeispiel.
 \end{enumerate}
+
+\section*{Chapter 2.3}
+\f{Baum-Zeit-Logik}
+
+\noindent Linear-Zeit Logik ist eine Logik, die sich auf alle unendlichen Sequenzen von Belegungen mit atomaren Eigenschaften bezieht. Es gibt nur eine 
+mögliche Zukunft. Man kann nicht über alternative Möglichkeiten den Entwicklung Aussagen machen. Baum-Zeit Logik erlaubt Aussagen über die Möglichkeiten eines
+Systems. Prominentester Vertreter ist CTL (Computation Tree Logic).
+\vspace*{5pt}
+
+\noindent Beispiel (siehe Bild): $\Rightarrow$ lässt sich nicht in LTL adäquat beschreiben. Es gibt sowohl Folgen, in denen $p$ nie gilt, als auch Folgen, in denen $p$ 
+irgendwann mal gilt. 
+
+\begin{figure}[!ht]
+ \centering
+ \includegraphics{pics/ctl}
+\end{figure}
+
+\f{Belegungsbaum zu einer Kripke-Struktur}:
+\vspace*{4pt}
+
+\noindent Sei $K=(S,\rightarrow,s_0,AP,L)$ eine Kripke-Struktur mit Startzustand $s_0$. Für $s\in S$ sei ein Belegungsbaum $T_K(s)$ zu $K$ mit Wurzel $s$ wie folgt
+definiert: 
+\vspace*{4pt}
+
+\noindent Zu jedem $s'\in S$ mit $s\rightarrow s'$ gibt es genau einen zu $T_K(s')$ isomorphen Unterbaum von $T_K(s)$. 
+\vspace*{4pt}
+
+\noindent $T_K(s)$ beschreibt quasi eine Entfaltung der Kripke-Struktur in einen unendlich tiefen Baum. 
+\vspace*{5pt}
+
+\noindent CTL-Formeln werden über Berechnungsbäume interpretiert. Sie machen bei jedem temporalen Operator eine Aussage über die Menge der möglichen 
+Entwicklungen im Baum durch existenzielle oder universelle Quantifizierung.
+\vspace*{5pt}
+
+\f{Syntax von CTL}:
+\vspace*{4pt}
+
+\noindent Sei $AP$ eine Menge von atomaren Aussagen. Dann ist die Menge der CTL-Formeln über $AP$ wie folgt definiert: 
+\begin{itemize}
+ \item jedes $p\in AP$ ist eine CTL-Formel
+ \item sind $\Phi_1$ und $\Phi_2$ Formeln, dann auch $\neg\Phi_1$, $\Phi_1 \vee\Phi_2$, $\f{EX}\Phi_1$, $\f{EG}\Phi_1$,$\Phi_1\f{EU}\Phi_2$
+ \item nichts sonst ist eine CTL-Formel
+\end{itemize}
+\f{EX} \dots exists next, \f{EG} \dots exists globally und \f{EU} \dots exists until sind temporale Operatoren.
+
+\noindent Alle anderen Operatoren kann man durch Formeln über diese ausdrücken. 
+\vspace*{5pt}
+
+\f{Nützliche Abkürzungen für CTL-Formeln}:
+\begin{itemize}
+ \item $\Phi_1\wedge\Phi_2 \equiv \neg(\neg\Phi_1\vee\neg\Phi_2)$
+ \item $true \equiv a\vee\neg a$
+ \item $\f{EF}\Phi \equiv true\f{EU}\Phi$
+ \item $\f{AX}\Phi \equiv \neg\f{EX}\neg\Phi$
+ \item $\f{AF}\Phi \equiv \neg\f{EG}\neg\Phi$
+ \item $\Phi_1\f{AU}\Phi_2 \equiv \f{AF}\Phi_2 \wedge (\Phi_1\f{AW}\Phi_2)$
+ \item $\Phi_1 \rightarrow \Phi_2 \equiv \neg\Phi_1\vee\Phi_2$
+ \item $false \equiv \neg true$
+ \item $\Phi_1\f{EW}\Phi_2 \equiv (\Phi_1\f{EU}\Phi_2)\vee\f{EG}\Phi_1$
+ \item $\f{AG}\Phi \equiv \neg\f{EF}\neg\Phi$
+ \item $\Phi_1\f{AW}\Phi_2 \equiv \neg(\neg\Phi_2\f{EU}\neg(\Phi_1\vee\Phi_2))$
+\end{itemize}
+\f{A} \dots all (für alle Pfade), \f{F} \dots future, \f{W} \dots weak until
+\vspace*{5pt}
+
+\f{Beispiele: siehe Übungsblätter}
 
 \end{chapter}
