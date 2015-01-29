@@ -48,5 +48,36 @@ Dieser bildet eine Faktor-2-Approximation, es werden also höchstens doppelt so 
 
 \end{section}
 
+\begin{section}{Hardwaresynthese}
+ Effektiv, aber teuer: Verbinden der Ressourcen und Register mittels \f{Multiplexern}. Dazu schaltet man einfach jedem Register einen $\sharp$-Ressourcen zu 1 Multiplexer vor, der mit einem Steuerindex arbeitet. Jedem Operand wird außerdem ein $\sharp$-Operationen zu 1 Multiplexer vorgeschaltet. Die Steuerung dieser Schaltung ergibt sich als Moore-Automat direkt aus Ablaufplan, Bindung und  Registerbindung mittels eines zurücksetzbaren Latenzzählers. Dabei entsteht jedoch ein sehr komplexer Ausgabeschaltkreis -- alternativ kann auch ein geeigneter ROM zum Nachschlagen der Ausgabe verwendet werden $\rightarrow$ mikroprogrammierte Steuerung. Probleme mit der Lösung durch Multiplexer:
+ \begin{itemize}
+  \item sehr teuer!
+  \item Multiplexerdelays kommen zur Verarbeitungszeit hinzu.
+  \item Halteoperationen der Register könnten auch in die Steuerregister integriert werden.
+  \item Die Leistungsaufnahme ist hoch (koppeln auch inaktiver Elemente an Register).
+  \item Es gibt keinen Weg, mehrere so erzeugte Komponenten zu einem System zu verschmelzen.
+ \end{itemize}
+ 
+ Alternativ könnte man die Implementierung auch \f{busbasiert} vornehmen. Es gibt dazu folgendes zu beachten:
+ \begin{itemize}
+  \item Billiger als Multiplexer, da die Registerports über Switches durchgeschaltet werden können.
+  \item Busdelays kommen zur Verarbeitungszeit hinzu.
+  \item Die Zahl der Busse muss nach dem maximalen Grad an Aktivitäten gewählt werden: Maximum aus Zahl der produzierten Resultatbits und Zahl der zu lesenden Operandenbits.
+  \item Immernoch relativ teuer, da sehr viele Steuerleitungen benötigt werden -- evtl. sogar mehr als bei Multiplexer-Lösung.
+ \end{itemize}
+ 
+ Es ist zu beachten, dass wir die ganze Zeit davon ausgehen, dass die Verarbeitungszeiten der Jobs für die Ressourcen, an die die Knoten des Problemgraphen gebunden sind, \f{Vielfache der Taktperiode} des Systems sind. Es genügt, nur Takte $T$ zu betrachten, für die für mindestens einen Job$v$ $\frac{\delta(v)}{T}$ ganzzahlig ist.
+ 
+ \pic{taktschlumpf}
+ 
+ Unter einer Taktperiode $T$ ist der \f{mittlere Taktschlupf} gegeben durch:
+ \[ mS(T) = \frac{\sum_{v\in V_T} \alpha(v) \cdot S(v,T)}{\sum_{v\in V_T} \alpha(v)} \]
+ 
+ Eine heuristische Möglichkeit, eine geeignete Taktperiode zu finden, besteht nun darin, für alle Taktperioden aus der Menge $\{ \delta(v) | v\in V_T \}$ eine Periode mit minimalem Taktschlupf zu suchen und diese zu wählen.
+
+
+ 
+\end{section}
+
  
 \end{chapter}
