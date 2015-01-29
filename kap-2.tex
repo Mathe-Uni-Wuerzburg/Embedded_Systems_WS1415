@@ -134,8 +134,10 @@ ein Alphabet $\Sigma, \Sigma^\omega$ die Menge aller unendlichen Folgen über $\
  \item $\sigma(i) \subseteq AP$ das i-te Element der Folge
  \item $\sigma^i \in (2^{AP})^\omega$ die unendliche Folge $\sigma(i)\sigma(i+1)\sigma(i+2)\dots$
 \end{itemize}
+\vspace*{5pt}
 
-\f{Syntax von LTL}
+\f{Syntax von LTL}:
+\vspace*{4pt}
 
 \noindent Sei $AP$ eine Menge von atomaren Aussagen. Dann ist die Menge der LTL Formeln über $AP$ wie folgt definiert: 
 \begin{enumerate}
@@ -151,7 +153,8 @@ ein Alphabet $\Sigma, \Sigma^\omega$ die Menge aller unendlichen Folgen über $\
 Folgen $\sigma \in (2^{AP})^\omega$, die $\Phi$ erfüllen, d.h. 
 \[[[\Phi]] = \{\sigma | \sigma \vDash \Phi\}\]
 
-\f{Erfüllung einer LTL-Formel}
+\f{Erfüllung einer LTL-Formel}:
+\vspace*{5pt}
 
 \noindent Sei $\sigma \in (2^{AP})^\omega$ und sei $\Phi$ eine LTL Formel. Dann gilt $\sigma \vDash \Phi$ (``$\sigma$ erfüllt $\Phi$'') nach folgender
 Fallunterscheidung über die Struktur von $\Phi$:
@@ -162,6 +165,206 @@ Fallunterscheidung über die Struktur von $\Phi$:
  \item $\sigma \vDash \f{X}\Phi$ \qquad  \qquad falls $\sigma^1 \vDash \Phi $
  \item $\sigma \vDash \Phi_1\f{U}\Phi_2$ \qquad falls $\exists i: \left(\sigma^i\vDash \Phi_2 \wedge \forall k < i:\sigma^k \vDash \Phi_1 \right)$
 \end{itemize}
+\vspace*{5pt}
 
+\f{Nützliche Abkürzungen für LTL-Formeln}:
+\vspace*{4pt}
+
+\f{F} \dots finally (``irgendwann''), \f{G} \dots globally (``immer''), \f{W} \dots weak until, \f{R} \dots releases
+\begin{itemize}
+ \item $\Phi_1\wedge\Phi_2 \equiv \neg(\neg\Phi_1\bigvee\neg\Phi_2)$
+ \item $\Phi_1 \rightarrow \Phi_2 \equiv \neg\Phi_1\bigvee\Phi_2$
+ \item $true \equiv a\bigvee\neg a$
+ \item $false \equiv \neg true$
+ \item $\f{F}\Phi \equiv true\f{U}\Phi$
+ \item $\f{G}\Phi \equiv \neg\f{F}\neg\Phi$
+ \item $\Phi_1\f{W}\Phi_2 \equiv (\Phi_1\f{U}\Phi_2)\bigvee\f{G}\Phi_1$
+ \item $\Phi_1\f{R}\Phi_2 \equiv \neg(\neg\Phi_1\f{U}\Phi_2)$
+\end{itemize}
+\vspace*{5pt}
+
+\f{Tautologie, Unerfüllbarkeit, Äquivalenz}:
+\vspace*{4pt}
+
+\f{Tautologie}: Jede Formel $\Phi$ mit $[[\Phi]] = \left(2^{AP}\right)^\omega$ heißt Tautologie
+\vspace*{4pt}
+
+\f{Unerfüllbarkeit}: Jede Formel $\Phi$ mit $[[\Phi]] = \varnothing$ heißt unerfüllbar
+\vspace*{4pt}
+
+\f{Äquivalenz}: zwei Formeln $\Phi_1$ und $\Phi_2$ heißen äquivalent, gdw. $[[\Phi_1]] = [[\Phi_2]]$. Wir schreiben dann auch $\Phi_1 \equiv \Phi_2$
+\vspace*{6pt}
+
+\f{Idempotenz und Rekursionsgesetze}:
+\vspace*{5pt}
+
+\begin{itemize}
+ \item $\f{F}\Phi \equiv \f{FF}\Phi$
+ \item $\f{G}\Phi \equiv \f{GG}\Phi$
+ \item $\Phi\f{U}\Psi \equiv \Phi\f{U}(\Phi\f{U}\Psi)$
+ \item Rekursionsgesetze:
+ \begin{itemize}
+  \item $\f{F}\Phi \equiv \Phi\bigvee\f{XF}\Phi$
+  \item $\f{G}\Phi \equiv \Phi\wedge\f{XG}\Phi$
+  \item $\Phi\f{U}\Psi \equiv \Psi\bigvee(\Phi\wedge\f{X}(\Phi\f{U}\Psi))$
+  \item $\Phi\f{W}\Psi \equiv \Psi\bigvee(\Phi\wedge\f{X}(\Phi\f{W}\Psi))$
+ \end{itemize}
+\end{itemize}
+\vspace*{5pt}
+
+\f{Sicherheitseigenschaften}:
+\vspace*{4pt}
+
+\noindent Eine Eigenschaft ist eine Sprache $L \subseteq \left(2^{AP}\right)^\omega$. Gibt es für alle $\sigma \in \left(2^{AP}\right)^\omega/L$ einen endlichen Präfix $w$,
+so dass für alle $\alpha \in \left(2^{AP}\right)^\omega$ schon gilt $w\alpha \notin L$, d.h. es gibt keine zulässige Erweiterung mehr, mit der man den Präfix $w$
+wieder nach $L$ bringen kann, dann nennt man $w$ einen \f{schlechten Präfix} und $L$ eine \f{Sicherheitseigenschaft}.
+\vspace*{6pt}
+
+\f{Lebendigkeitseigenschaften}:
+\vspace*{4pt}
+
+\noindent Es gilt $L \subseteq \left(2^{AP}\right)^\omega$. Gibt es für jedes $w \in \left(2^{AP}\right)^*$ ein $\alpha \in \left(2^{AP}\right)^\omega$ so dass 
+wieder $w\alpha \in L$, d.h. es gibt stets eine zulässige Erweiterung, mit der man einen Präfix $w$ nach $L$ bringen kann, dann nennt man $L$ eine 
+\f{Lebendigkeitseigenschaft}.
+\vspace*{5pt}
+
+\noindent Jede LTL-Eigenschaft lässt sich als Schnitt einer Sicherheitseigenschaft mit einer Lebendigkeitseigenschaft darstellen. 
+\vspace*{4pt}
+
+\f{Interpretation von LTL über Kripke-Strukturen  }
+\vspace*{5pt}
+
+\noindent Kripke Strukturen sind ja die formalen Modelle, die wir für Implementierungen von Systemen betrachten. Wenn wir nun wissen wollen, ob ein System in LTL 
+formulierte Eigenschaften erfüllt, müssen wir nachprüfen, ob die Eigenschaft über den Menge aller (unendlichen) Ausführungsfolgen der Kripke Struktur gilt. 
+\vspace*{4pt}
+
+\noindent Sei $K = (S,\rightarrow, St, AP,L)$ eine Kripke-Struktur. 
+\vspace*{4pt}
+
+\noindent Eine Folge $\rho \in S^\omega$ mit $\rho(1)\in St$ und $\forall i:\rho(i)\rightarrow \rho(i+1)$ heißt Ausführung von $K$.
+\vspace*{4pt}
+
+\noindent Für eine Ausführung $\rho$ betrachten wir nun  $L(\rho) \in \left(2^{AP}\right)^\omega$ mit $\forall i: L(\rho)(i):=L(\rho(i))$, d.h. die 
+Labelingfolge zur Ausführung $\rho$. 
+\vspace*{4pt}
+
+\noindent Dann bezeichnen wir mit $[[K]]$ die Menge aller möglichen Labelingsequenzen zu Ausführungen von K. 
+\vspace*{4pt}
+
+\[[[K]] = \{L(\rho)|\rho \text{ ist Ausführung von } K \}\]
+
+\f{Das LTL-Model-Checking Problem}
+\vspace*{4pt}
+
+\noindent Das Problem ist es, zu entscheiden, ob eine Kripke Struktur, die wir aus der Implementierung abgeleitet haben, ein Modell für die Spezifikation ist. 
+\vspace*{4pt}
+
+\noindent Gegeben sei eine Kripke-Struktur $K=(S,\rightarrow, St,AP,L)$ und eine LTL-Formel $\Phi$ über $AP$. Entscheide, ob $[[K]] \subseteq [[\Phi]]$.
+\vspace*{4pt} 
+
+\noindent Es muss also für jede Ausführung $\rho$ das Labeling $L(\rho)$ die Formel $\Phi$ erfüllen. Wir schreiben dann auch $K \vDash \Phi$.
+
+\noindent Vorsicht: es kann sowohl $K \vDash \Phi$ als auch $K \nvDash \neg\Phi$ gelten!
+\vspace*{6pt}
+
+\f{Fallstrick endliche Ausführungen}:
+\vspace*{4pt}
+
+\noindent Vorsicht: LTL Formeln werden nur über den unendlichen Ausführungen interpretiert.
+\vspace*{4pt}
+
+\noindent Wenn die Kripke Struktur zum Beispiel Deadlocks enthält (Zustände ohne Nachfolger in der Transitionsrelation), dann werden alle Ausführungen, die auf 
+einem solchen Zustand enden ignoriert, weil sie endliche Länge haben. Auf solchen Ausführungen wird die Formel nicht interpretiert.
+\vspace*{4pt}
+
+\noindent Das kann im Extremfall unerwartete Konsequenzen haben: Angenommen in $K$ führt jeder Weg in einen Deadlock. Dann ist $[[K]] = \varnothing$. Damit 
+erfüllt $K$ aber jede Formel!
+\vspace*{6pt}
+
+\f{LTL-Model-Checking}
+\vspace*{4pt}
+
+\noindent Wir wollen nun anschauen, wie man (im Prinzip, schnelle Heuristiken sind nach wie vor Gegenstand der aktuellen Forschung) Model Checking für LTL Formeln 
+algorithmisch entscheidet:
+
+\noindent Gegeben sei eine Kripke-Struktur $K=(S,\rightarrow, St,AP,L)$ und eine LTL-Formel $\Phi$ über $AP$. Entscheide, ob $[[K]] \subseteq [[\Phi]]$.
+
+\noindent Im Prinzip gibt es zwei Möglichkeiten: 
+\begin{enumerate}
+ \item Konstruiere eine LTL-Formel $\Psi$ mit $[[K]] = [[\Psi]]$ und zeige $\Psi \rightarrow \Phi$. Dies ist sehr aufwändig.
+ \item Die Menge der Ausführungen von $K$ lässt sich leicht als Sprache eines Büchi Automaten $BA(K)$ d.h. $[[K]] = L(BA(K))$ auffassen. Konstruiere einen weiteren 
+ Büchi Automaten $BA(\neg \Phi)$ der die Sprache $[[\neg\Phi]]$ akzeptiert und entscheide \[L(BA(K)) \cap L(BA(\neg\Phi)) = \varnothing\]
+\end{enumerate}
+
+\f{Büchi-Automaten}
+\vspace*{4pt}
+
+\noindent Büchi-Automaten sind im Prinzip endliche Automaten mit einem anderen Akzeptanzkriterium. Ein Tupel $B=(S,S_0,A,\Delta,F)$ heißt \f{Büchi-Automat}, 
+wobei
+\begin{itemize}
+ \item $S$ \dots eine endliche Menge von Zuständen 
+ \item $S_0 \subseteq S$ eine Menge von Startzuständen 
+ \item $\Delta \subseteq S\times A \times S$ die Übergangsrelation
+ \item $A$ ein endliches Alphabet
+ \item $F \subseteq S$ eine Menge von Endzuständen (Akzeptanzzuständen) ist.
+\end{itemize}
+Man kann Büchi Automaten ebenso durch Diagramme darstellen, wie man das von endlichen Automaten kennt lediglich die Sprache ist anders definiert:
+
+\noindent Sei $B=(S,S_0,A,\Delta,F)$ ein Büchi-Automat. 
+
+\noindent Für ein unendliches Wort $\sigma \in A^\omega$ ist $s(1)\sigma(1)s(2)\sigma(2)\dots s(i)\sigma(i)\dots$ ein Lauf in $B$ mit Beschriftung $\sigma$ 
+genau dann wenn
+\begin{itemize}
+ \item $s(1) \in S_0$ und
+ \item für alle $i$ gilt $s(i)\sigma(i)s(i+1)\in \Delta$
+\end{itemize}
+Ein Lauf heißt akzeptierend, wenn für unendlich viele $i$ gilt: $s(i)\in F$. 
+
+Ein Büchi-Automat $B = (S,S_0,A,\Delta,F)$ akzeptiert die Sprache $L(B) \subseteq A^\omega$ genau dann, wenn es für jedes $\sigma\in L(B)$ einen akzeptierenden 
+Lauf mit Beschriftung $\sigma$ gibt. 
+\vspace*{5pt}
+
+\f{Büchi-Automaten und LTL}:
+\vspace*{5pt}
+
+\noindent Sei $AP$ wieder eine Menge atomarer Eigenschaften. Setzt man $A = 2^{AP}$, dann sind Worte aus $A^\omega$ wieder unendliche Verhaltensmuster über $AP$. 
+\vspace*{5pt}
+
+\noindent Wir werden sehen, dass man zu jeder LTL Formel $\Phi$ über $AP$ einen Büchi Automaten $BA(\Phi)$ angeben kann, mit $L(BA(\Phi)) = [[\Phi]]$ d.h. der nur
+Läufe akzeptiert auf denen die Formel gilt. Zeigen tun wir das zunächst an einem Beispiel:
+\vspace*{5pt}
+
+\noindent Für die Formel $G(p \rightarrow Fq)$ über $AP=\{p,q\}$ akzeptiert folgender Automat die Sprache $[[G(p\rightarrow Fq)]]$
+\begin{figure}[!ht]
+ \centering
+ \includegraphics[scale=0.7]{pics/automatpq}
+\end{figure}
+
+\f{Der Produktautomat}
+\vspace*{5pt}
+
+\noindent Gegeben seien zwei Büchi-Automaten $B_1=(S_1,S_{1,0},A,\Delta_1,F_1)$, $B_2=(S_2,S_{2,0},A,\Delta_2,F_2)$ als Akzeptoren zweier $\omega$ regulärer
+Sprachen $L(B_1),L(B_2)$:  \\ wir definieren den \f{Produktautomaten} $B_{1\times2} =(S_{1\times2},S_{1\times2,0},A,\Delta_{1\times2},F_{1\times2})$ durch 
+\begin{itemize}
+ \item $S_{1\times2} := S_1\times S_2$
+ \item $S_{1\times2,0} := S_{1,0}\times S_{2,0}$
+ \item $\Delta_{1\times2} := \{((s_1,s_2),a(t_1,t_2))|(s_1,a,t_1)\in \Delta_1 \wedge (s_2,a,t_2)\in \Delta_2\}$
+ \item $F_{1\times2} := F_1\times F_2$
+\end{itemize}
+\vspace*{6pt}
+\f{LTL-Model-Checking}
+\vspace*{5pt}
+
+\noindent Wir haben nun eine Möglichkeit entwickelt, mit der man (im Prinzip, schnelle Heuristiken sind nach wie vor Gegenstand der aktuellen Forschung) Model 
+Checking für LTL Formeln algorithmisch durchführen kann:
+
+\noindent Gegeben sei eine Kripke-Struktur $K=(S,\rightarrow, St,AP,L)$ und eine LTL-Formel $\Phi$ über $AP$. Entscheide, ob $[[K]] \subseteq [[\Phi]]$.
+\begin{enumerate}
+ \item die Kripke Struktur $K$ stammt in der Regel von einer Spezifikation des Systems in Form eines Automaten. Bei unendlichem Betrieb lässt sich diese leicht 
+ durch einen Büchi-Automaten $BA(K)$ ausdrücken. 
+ \item übersetze die LTL Formel $\Phi$ in einen Büchi-Automaten $BA(\neg\Phi)$ der die Sprache $[[\Phi]]$ akzeptiert.
+ \item bilde den Produktautomaten $BA(L(BA(K)))\cap L(BA(\neg\Phi))$ und entscheide, ob  die Menge der akzeptierenden Läufe leer ist. 
+ \item gibt es einen akzeptierenden Lauf, ist dieser ein Gegenbeispiel.
+\end{enumerate}
 
 \end{chapter}
