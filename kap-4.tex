@@ -1,6 +1,51 @@
 \begin{chapter}{Architektursynthese}
 \begin{section}{Binding}
+ Eine \f{Bindung} eines Sequenzgraphen $G_S = (V_S,E_S)$ bezüglich eines Ressourcengraphen $G_R = (V_S \cup V_T, E_R)$ und einer Allokation $\alpha: V_T\rightarrow \mathbb{N}_0$ ist ein Paar von Funktionen $\beta: V_S\rightarrow V_T$ und $\gamma:V_S\rightarrow \mathbb{N}$ mit 
+ \begin{itemize}
+  \item $\forall v_S \in V_S: (v_S, \beta(v_S)) \in E_R$
+  \item $\forall v_S \in V_S: \gamma(v_S)\leq \alpha(\beta(v_S))$
+ \end{itemize}
+ Eine Bindung ordnet jeder Aufgabe eine verfügbare Instanz einer Ressource zu, die diese Aufgabe ausführen kann. Damit ein Ablaufplan also legal sein kann, darf zu jeder Zeit jeder Ressource nur eine Aufgabe zugeordnet sein.
  
+ Zwei Aufgaben können der gleichen Ressource zugeordnet werden, wenn sie vom gleichen Typ sind und sich ihre Ausführungszeiten nicht überlappen. Aufgaben können genau dann nebneläufig ausgeführt werden, wenn sie nicht auf einem gerichteten Pfad im Sequenzgraphen liegen.
+ 
+ Ein Knotenpaar $v_i,v_j\in V_S$ heißt
+ \begin{itemize}
+  \item \f{schwach verträglich}, wenn $\exists r_k\in V_R$ mit $(v_i,r_k)\in E_R$ und $(v_j,r_k)\in E_R$
+  \item \f{ablaufplanverträglich}, wenn sie schwach verträglich sind und $\uptau(v_i) \geq \uptau(v_j)+w(r_k)$ oder umgekehrt
+  \item \f{stark verträglich}, wenn sie schwach verträglich sind und es im Sequenzgraphen einen Pfad von $v_i$ nach $v_j$ oder umgekehrt gibt
+ \end{itemize}
+ 
+ Schwach verträgliche Knoten kann man grundsätzlich an die gleiche Ressource binden -- allerdings sind dann evtl. nurnoch sehr stark sequentielle Pläne möglich. Ablaufplanverträgliche Knoten kann man unter Beibehaltung der Gültigkeit eines gegebenen Ablaufplans an die selbe Ressource binden. Stark verträgliche Knoten kann man immer an die selbe Ressource binden.
+ 
+ Der \f{Verträglichkeitsgraph} $G_V=(V_S,E_V)$ ist ein ungerichteter Graph, der genau dann eine Kante zwischen zwei Knoten hat, wenn sie auf eine Art verträglich sind. Er besitzt also immer mindestens genau so viele unabhängige Mengen, wie es Ressourcentypen gibt. Eine Menge gegenseitig verträglicher Aufgaben ist eine Clique (vollständiger Untergraph). $\Rightarrow$ Minimierung der Kosten entspricht einer Überdeckung des Verträglichkeitsgraphen mit möglichst wenig Cliquen.
+ 
+ Leider ist Clique-Cover NP-vollständig, jedoch existieren brauchbare Heuristiken. Wir überführen dazu das Problem auf Minimum Vertex Cover auf dem \f{Hypergraphen} $H=(V,E,\rho)$ -- wobei $\rho: E \rightarrow 2^V$ eine Funktion ist, die jeder Kante ihren Rand zuordnet -- mit Bewertungsfunktion $c: E\rightarrow \mathbb{N}_0$. Um dieses Problem möglichst schnell lösen zu können, benötigen wir für den \f{Branch\&Bound}-Algorithmus möglichst gute untere Schranken. Diese Schranken finden wir über das Gewicht der größten Clique des Hypergraphen. Diese größte Clique zu finden ist auch NP-vollständig. Die \f{Max-Clique-Heuristik} liefert jedoch ausreichend gute Ergebnisse mit Hilfe des Greedy-Verfahrens. \\
+ 
+ \f{Duale Betrachtungsweise}\\
+ Der \f{Ressourcen-Konfliktgraph} $G_K$ ist der Komplementgraph des Verträglichkeitsgraph $G_V=(V_S,E_V)$, also $G_K = (V_S, \binom{V_S}{2}\setminus E_V)$ ($\binom{V_S}{2}$ ist die Menge aller zweielementigen Mengen mit Elementen aus $V_S$, also alle möglichen Kanten). Also entspricht eine maximale Verträglichkeitsmenge einer maximalen unabhängigen Menge des Konfliktgraphen. So lässt sich das Problem der kostenminimalen Bindung auch auf ein Graphfärbungsproblem des Konfliktgraphen mit möglichst wenig Farben überführen -- was leider auch NP-vollständig ist.
+ 
+ Existiert bereits ein Ablaufplan, so lässt sich das Färben des Konfliktgraphen effizient exakt lösen, wenn es zu jedem Knoten nur einen Ressourcentyp gibt oder eine Typbindung schon gegeben ist. Diese effiziente Lösung arbeitet mit der speziellen Struktur des Konfliktgraphen, der sich in einen \f{Intervallgraphen} überführen lässt. Dabei wird jeder Kante ein rechtsoffenes Intervall zugeordnet, entsprechend der $\beta$-Funktion der Bindung. Im Intervallgraphen haben zwei Aufgaben genau dann eine Kante, wenn sich die Intervalle der beiden Knoten überlappen. Das Färben dieser Intervalle erfolgt über den \f{left-edge Algorithmus}.
+
+ Bei \f{Bindung unter periodischer Ablaufplanung} sind gegeben: ein iterativer Problemgraph $G_S = (V_S,E_S,s)$ und ein Ressourcengraph $G_R=(V_S\cup V_T, E_R)$, ein gültiger periodischer Ablaufplan mit Periode $P$ unter statischer Bindung und Ressourcentypbindung. Gesucht wird eine Bindung, die die Anzahl der benutzten Ressourcen minimiert. Beim Aufstellen des Konfliktgraphen ergeben sich unendlich viele periodische Intervalle, die sich auf unterschiedliche Art schneiden können. Eine geeignete Darstellung dieser Intervalle ist:
+ 
+ \pic{periodKonfl}
+ 
+ Bei einem \f{Graph mit zirkulären Kanten} wird jedem Knoten ein Kreissegment zugeordnet und zwischen zwei Knoten befindet sich genau dann eine Kante, wenn die Kreissegmente überlappen. Hier ist es ausreichend, diese Segmente zu kennen und sie zu färben. Dazu wird der \f{Sort\&Match Algorithmus} verwendet:
+ 
+ \begin{itemize}
+  \item bestimme $d_{min}$, $d_{max}$ und ein $t$ mit $d_{min} = d(t)$ und die Menge $V_A$ aller $v$ für die gilt: $t$ liegt auf dem Segment $(l(v),r(v))$.
+  \item Überführe alle Segmente für $v\in V_B = V\setminus V_A$ in:
+  \[ l'(v) = (l(v) + P - t)\mod P \text{ und } r'(v) = (r(v)+P-t)\mod P \] 
+  (``Entrolle den Kreis ab der Stelle $t$ und übernehme seine Segmente auf die entstehende Strecke'')
+  \item Färbe die Knoten aus $V_B$ nach dem \f{Left-edge Algorithmus} (möglich, weil die ausgerollten Segmente Intervalle bilden!)
+  \item Bestimme eine möglichst große Menge aus $V_A$, die mit den bisher vergebenen Farben gefärbt werden kann.
+  \item Gebe jedem verbleibenden Knoten aus $V_A$ eine bisher ungenutzte Farbe aus $V_A$
+ \end{itemize}
+Dieser bildet eine Faktor-2-Approximation, es werden also höchstens doppelt so viele Farben verwendet wie in der optimalen Lösung. ($ALG = 2\cdot OPT$)
+ 
+ Sowohl \f{Left-edge} als auch \f{Sort\&Match} können dazu verwendet werden, ebenfalls die Anzahl der benötigten Register zu minimieren. Dazu muss jedem Job zusätzlich eine Lebensdauer zugeordnet werden. Aus diesen baut man dann Lebenszeitintervalle und verwendet die bereits bekannten Techniken, um sie mit möglichst wenig Farben zu färben.
+
 \end{section}
 
  
