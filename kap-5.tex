@@ -1,3 +1,20 @@
-\begin{chapter}{Kapitel}
+\begin{chapter}{Softwaresynthese}
+\begin{section}{Übersetzer}
+ \f{Phasen eines Übersetzers}
+ \pic{uebersetzer}
  
+ \begin{subsection}{Zwischencode}
+  Aufbrechen komplexer Konstrukte in 3 Adresskonstrukte $\rightarrow$ Portierbarkeit. Zerlegung in Unterprogramme, besteht nurnoch aus Codeeinheiten für einzelne Routinen. Lässt sich leicht in eine Graphdarstellung konvertieren. z.B. A3 
+ 
+ \f{Optimierungsaufgaben:} Registervergabe -- Bindung von symbolischen an physikalische Register. Codeminimierung -- Quellcode $\rightarrow$ längenminimaler Maschinencode. 
+ 
+ Zwischencode kann als \f{Kontrollflussgraphen} -- Knoten-markierte Graphen -- dargestellt werden. Ein \f{Grundblock} bezeichnet eine maximal lange Folge fortlaufender Anweisungen. Verschmelzen von Grundblöcken aus dem Kontrollflussgraphen zu Knoten $\rightarrow$ Grundblockgraph. Außerdem können Grundblöcke in \f{Taskgraphen} übersetzt werden. Grundblock $\rightarrow$ DAG $\rightarrow$ Tasksystem $\rightarrow$ Hardware.
+ \end{subsection}
+\end{section}
+\begin{section}{Registervergabe und Registerbindung}
+ Fest vorgegebene Registerzahl, Vergabe kann lokal oder global betrachtet werden, Konfliktgraphen sind nicht immer Intervallgraphen. Variablen in Blöcken können \f{Lebensspannen} zugeordnet werden. Das Problem der lokalen Registervergabe kann durch Graphfärben gelöst werden -- left-edge Algorithmus. 
+ 
+ \f{Globale Registervergabe:} Erfahrungsregel: Programme verbringen die größte Ausführungszeit in inneren Schleifen $\rightarrow$ Konzentration der Registervergabe auf Schleifen. In Schleifen ist darauf zu achten, eine möglichst kleine Zahl von Speicherzugriffen zu erzeugen.  
+
+\end{section}
 \end{chapter}
