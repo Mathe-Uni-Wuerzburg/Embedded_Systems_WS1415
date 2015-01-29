@@ -74,10 +74,26 @@ Dieser bildet eine Faktor-2-Approximation, es werden also höchstens doppelt so 
  \[ mS(T) = \frac{\sum_{v\in V_T} \alpha(v) \cdot S(v,T)}{\sum_{v\in V_T} \alpha(v)} \]
  
  Eine heuristische Möglichkeit, eine geeignete Taktperiode zu finden, besteht nun darin, für alle Taktperioden aus der Menge $\{ \delta(v) | v\in V_T \}$ eine Periode mit minimalem Taktschlupf zu suchen und diese zu wählen.
-
-
- 
 \end{section}
 
+\begin{section}{Optimierungsverfahren zur Hardwaresynthese}
+ \f{Module mit Fließbandverarbeitung:} Ressourcen mit Pipeline-Registern, die eine Periode $\pi(x)$ haben, mit der sie wieder gebunden werden können. 
+ \f{Bandbreitenbeschränkungen:} Bei busbasierten Zielarchitekturen hat man beschränkte Bandbreite auf den Operanden- und Resultatbussen, die von der Registerbank abhängen. 
  
+ \begin{subsection}{Erweiterung von List Scheduling}
+  List Scheduling kann sehr leicht auf die Hardwaresynthese angepasst werden. Es funktioniert im wesentlichen genau wie normales List Scheduling, jedoch weisen wir den Jobs Ressourcen zu. Es kommen ähnliche Prioritätssysteme zur Anwendung. Diese Anpassungen funktionieren ohne Performanzverlust beim List Scheduling, es bleibt jedoch immernoch eine Heuristik. Durch das einführen von \f{Zeitschlitzen} abhängig von den Latenzschranken der Jobs lässt sich ein ILP aufstellen, dass uns einen Ablaufplan mit minimalen Ressourcenkosten liefert. 
+  
+  Im ILP gibt es zu jeder Zeitschlitz/Job/Ressourcen-Kombination eine Variable $x_{v,u,t}$. Außerdem gibt es für jeden Ressourcentyp $u$ eine Variable $y_u$, ihr Wert gibt an, wieviele Ressourcen dieses Typs alloziiert werden müssen. $\Rightarrow$ Zielfunktion: $\min \sum_{u\in V_R} c(u) \cdot y_u$
+  
+  \f{Bindungsbeschränkungen:} Es darf zu einem Zeitpunkt nur genau ein Job auf einer Ressource laufen. Die Zeitbeschränkungen für jeden Job müssen eingehalten werden. Keinen Ressourcentyp $u$ dürfen mehr als $y_u$ Aufgaben gleichzeitig belegen.
+  
+  Um dieses System nun auf die Hardwaresynthese anwenden zu können, müssen die zu Grunde liegenden Ungleichungen geringfügig geändert werden. Man ersetzt $w(u)$ durch die Periode $\pi(u)$. Die startenden Aufgaben dürfen zu keinem Zeitpunkt $t$ die Operandenbandbreite übersteigen -- analoges gilt für die terminierenden Aufgaben und die Resultatbandbreite. Außerdem bedarf es binärer Variablen um die Lebensdauer der Knoten anzuzeigen und einer Variable, die die Registerzahl anzeigt -- diese gilt es zu minimieren.
+  
+  Die \f{Flussmodelle} sind lineare Programme, die sowohl ganzzahlige als auch reelwertige Variablen zulassen. Sie eignen sich zur Latenz- und Ressourcenminimierung. Dabei gibt es je Aufgabe und Ressource zwei Variablen, die Quellen und Senken des Flusses. Zusätzlich gibt es Flussvariablen, die angeben, dass eine Ressourceninstanz eine Aufgabe weitergibt und reelwertige Variablen für die Startzeiten und eine Latenzschranke.
+  
+  Die \f{Bindungsbeschränkungen} ergeben sich wieder aus dem Belegen der Ressourcen. Außerdem gibt es wieder Datenabhängigkeitsbeschränkungen, abhängig vom Delay. Eine Aufgabe kann eine Ressource aus der Quelle oder von einer anderen Ressource übernehmen. Ebenso geben sie Ressourcen an andere Aufgaben oder eine Senke weiter -- es gilt also stets die \f{Flusserhaltung}. Für die Aufgaben gilt eine Latenzschranke, die auch teil der Minimierung sein kann. Es gelten die gleichen Ressourcenbeschränkungen wie oben, außerdem dürfen Aufgaben, sie sich eine Ressource teilen, nicht gleichzeitig laufen. 
+  
+  Man betrachtet dann folgende Zielfunktion: $\min \sum_{u\in V_T} c(u)\cdot a_u$
+ \end{subsection}
+\end{section}
 \end{chapter}
