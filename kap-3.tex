@@ -39,7 +39,7 @@
     
     Der \f{Constraintgraph} ist ein gewichteter, gerichteter Graph mit Gewichtsfunktion, die sich aus dem Sequenzgraphen ergibt. Er enthält alle Knoten \& Kanten des Sequenzgraphen sowie für jede Zeitbeschränkung eine weitere Kante, deren Gewicht der Zeitbeschränkung entspricht.\\
     
-    Die Existenz eines gültigen Ablaufplans kann mit Zeit- aber ohne Ressourcenbeschränkungen in polinomieller Zeit entschieden und ein latenzminimaler, gültiger Ablaufplan $\uptau$ -- falls existent -- gefunden werden. (Komplexität $O(|V_S|\cdot|E_C|)$ mittels Bellman-Ford)\\
+    Die Existenz eines gültigen Ablaufplans kann mit Zeit- aber ohne Ressourcenbeschränkungen in polynomieller Zeit entschieden und ein latenzminimaler, gültiger Ablaufplan $\uptau$ -- falls existent -- gefunden werden. (Komplexität $O(|V_S|\cdot|E_C|)$ mittels Bellman-Ford)\\
    \end{subsection}
    
    \begin{subsection}{Ablaufplanung mit Ressourcenbeschränkungen}
@@ -62,6 +62,7 @@
     \f{Force Directed Scheduling} benutzt ein Kräftemodell, um die Jobs an geeignete Ausführungszeitpunkte zu schieben/ziehen. Dynamische Änderung des Modells nach Planung von Aufgaben, Berücksichtigung direkter Nachbarschaften im Graphen, Updates des Kräftemodells nach jedem Schritt. Man beachtet dabei folgende Kräfte:
     \begin{itemize}
      \item Selbstkraft -- Ausführung am besten zu Zeiten geringer Auslastung
+     \[ F_{v,t}^S = \frac{1}{slack(v)+1} \cdot \sum_{i=\uptau_0(v)}^{\uptau_1(v)} q_{\beta(v),i} - q_{\beta(v),t}\]
      \item Nachbarschaftskräfte -- Einfluss durch Vorgänger- \& Nachfolger-Jobs. Planung nach sinkender mittlerer Auslastung der Ressourcen
     \end{itemize}
     Benutze diese Kräfte als Priorisierung für das List Scheduling
@@ -94,7 +95,7 @@
    \begin{subsection}{Sequenzielle periodische Ablaufplanung}
     \f{Satz:} Es gibt einen gültigen, sequentiellen, periodischen Ablaufplan ohne Ressourcenbeschränkung mit Iterationsintervalllänge $L$ für einen Problemgraphen $G=(V,E,s)$, genau dann, wenn
     \[ \forall u,v\in V: W(u,v)>L \Rightarrow S(u,v) \geq 1 \]
-    Dabei ist $S(u,v)$ die Menge der Längen der kürzesten Pfade von $u$ nach $v$.
+    Dabei ist $S(u,v)$ die Menge der Längen der kürzesten Pfade von $u$ nach $v$ und $W(u,v)$ ist das Maximum der Bearbeitungszeiten der Knoten auf allen Pfaden von $u$ nach $v$.
    \end{subsection}
    
    \begin{subsection}{Retiming}
@@ -227,9 +228,6 @@
    
    \f{Satz von Liu:} Gegeben sei eine Menge von periodischen Tasks $V$ ohne Datenabhängigkeiten. Dann liefert dynamisches EDF Scheduling einen Ablaufplan, der alle Deadlines einhält, falls
    \[ 1 \geq \sum_{v\in V} \frac{w(v)}{t_d^*(v)} \]
-
-
-
   \end{subsection}
   \end{section}
 \end{chapter}
