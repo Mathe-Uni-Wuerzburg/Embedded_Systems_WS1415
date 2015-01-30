@@ -7,7 +7,7 @@
  \end{itemize}
  Eine Bindung ordnet jeder Aufgabe eine verfügbare Instanz einer Ressource zu, die diese Aufgabe ausführen kann. Damit ein Ablaufplan also legal sein kann, darf zu jeder Zeit jeder Ressource nur eine Aufgabe zugeordnet sein.
  
- Zwei Aufgaben können der gleichen Ressource zugeordnet werden, wenn sie vom gleichen Typ sind und sich ihre Ausführungszeiten nicht überlappen. Aufgaben können genau dann nebneläufig ausgeführt werden, wenn sie nicht auf einem gerichteten Pfad im Sequenzgraphen liegen.
+ Zwei Aufgaben können der gleichen Ressource zugeordnet werden, wenn sie vom gleichen Typ sind und sich ihre Ausführungszeiten nicht überlappen. Aufgaben können genau dann nebenläufig ausgeführt werden, wenn sie nicht auf einem gerichteten Pfad im Sequenzgraphen liegen.
  
  Ein Knotenpaar $v_i,v_j\in V_S$ heißt
  \begin{itemize}
@@ -91,7 +91,7 @@ Dieser bildet eine Faktor-2-Approximation, es werden also höchstens doppelt so 
   
   Die \f{Flussmodelle} sind lineare Programme, die sowohl ganzzahlige als auch reelwertige Variablen zulassen. Sie eignen sich zur Latenz- und Ressourcenminimierung. Dabei gibt es je Aufgabe und Ressource zwei Variablen, die Quellen und Senken des Flusses. Zusätzlich gibt es Flussvariablen, die angeben, dass eine Ressourceninstanz eine Aufgabe weitergibt und reelwertige Variablen für die Startzeiten und eine Latenzschranke.
   
-  Die \f{Bindungsbeschränkungen} ergeben sich wieder aus dem Belegen der Ressourcen. Außerdem gibt es wieder Datenabhängigkeitsbeschränkungen, abhängig vom Delay. Eine Aufgabe kann eine Ressource aus der Quelle oder von einer anderen Ressource übernehmen. Ebenso geben sie Ressourcen an andere Aufgaben oder eine Senke weiter -- es gilt also stets die \f{Flusserhaltung}. Für die Aufgaben gilt eine Latenzschranke, die auch teil der Minimierung sein kann. Es gelten die gleichen Ressourcenbeschränkungen wie oben, außerdem dürfen Aufgaben, sie sich eine Ressource teilen, nicht gleichzeitig laufen. 
+  Die \f{Bindungsbeschränkungen} ergeben sich wieder aus dem Belegen der Ressourcen. Außerdem gibt es wieder Datenabhängigkeitsbeschränkungen, abhängig vom Delay. Eine Aufgabe kann eine Ressource aus der Quelle oder von einer anderen Ressource übernehmen. Ebenso geben sie Ressourcen an andere Aufgaben oder eine Senke weiter -- es gilt also stets die \f{Flusserhaltung}. Für die Aufgaben gilt eine Latenzschranke, die auch Teil der Minimierung sein kann. Es gelten die gleichen Ressourcenbeschränkungen wie oben, außerdem dürfen Aufgaben, sie sich eine Ressource teilen, nicht gleichzeitig laufen. 
   
   Man betrachtet dann folgende Zielfunktion: $\min \sum_{u\in V_T} c(u)\cdot a_u$
  \end{subsection}
